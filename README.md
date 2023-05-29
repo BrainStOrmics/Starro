@@ -5,9 +5,10 @@
 
 [Quick Example](https://github.com/Bai-Lab/Starro/blob/main/notebooks/starro_rna_seg_tutorial.ipynb) - [Citation](https://github.com/Bai-Lab/Starro)
 
+![image](https://github.com/Bai-Lab/Starro/assets/37856906/603e3bf3-0bd9-4633-938f-9ec17c76e22c)
+
 Cell segmentation, the process of distinguishing boundaries of individual cells, is an essential prerequisite for analyses of emerging subcellular-resolution sequencing-based spatial transcriptomics (sST). Conventional image segmentation techniques rely on in situ cell staining, resulting in multiple technical challenges during subsequent ex situ sequencing process in sST experiments. Here, we present Starro, a segmentation method that directly leverages RNA signals for precise delineation of cellular boundaries from sST data. We demonstrate Starro’s robustness and accuracy across extensive benchmarks, including both simulated and real data from sequencing-based and imaging-based ST data. Additionally, we showcase how Starro empowers various downstream analyses by identifying rare, spatially-dispersed murine embryonic macrophages, predicting pleiotropic ligand-receptor interactions during limb morphogenesis, computing RNA velocity of cardiac cell fate bifurcation, and making spatially-resolved in silico perturbation predictions. These results demonstrate Starro's power in enabling spatial-aware single-cell level analyses for many STs, with potential to revolutionize or replace conventional scRNA-seq techniques.
 
-![image](https://github.com/Bai-Lab/Starro/assets/37856906/603e3bf3-0bd9-4633-938f-9ec17c76e22c)
 
 ## Highlights of Starro:
 * Starro provides the sole RNA-based, image-based, and combinatorial cell segmentation approaches, capable of analyzing all published sequencing- and imaging-based spatial transcriptomic data with subcellular resolution. 
