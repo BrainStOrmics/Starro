@@ -472,7 +472,7 @@ def _find_peaks(
     peak_idx = peak_idx[np.argpartition(peak_score, -n_peak_keep)[-n_peak_keep:]]
 
     peaks = np.zeros(X.shape, dtype=int)
-    for i in len(peak_idx):
+    for i in range(len(peak_idx)):
         peaks[peak_idx[i][0], peak_idx[i][1]] = i + 1
     return peaks
 
