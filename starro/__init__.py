@@ -1,5 +1,3 @@
-"""Spatiotemporal modeling of spatial transcriptomics
-"""
 from . import (
     align,
     benchmark,

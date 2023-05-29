@@ -428,13 +428,16 @@ def label_connected_components(
     SKM.set_layer_data(adata, out_layer, labels)
 
 
-def _find_peaks(X: np.ndarray, **kwargs) -> Tuple[np.ndarray, np.ndarray]:
+def _find_peaks(
+    X: np.ndarray, use_delta: bool = False, **kwargs
+) -> Tuple[np.ndarray, np.ndarray]:
     """Find peaks from an arbitrary image.
 
     This function is a wrapper around :func:`feature.peak_local_max`.
 
     Args:
-        X: Array to find peaks from
+        X: 2D Array to find peaks from
+        use_delta: Whether to filter the peaks using delta calculation.
         **kwargs: Keyword arguments to pass to :func:`feature.peak_local_max`.
 
     Returns:
@@ -444,9 +447,23 @@ def _find_peaks(X: np.ndarray, **kwargs) -> Tuple[np.ndarray, np.ndarray]:
     _kwargs = dict(p_norm=2)
     _kwargs.update(kwargs)
     peak_idx = feature.peak_local_max(X, **_kwargs)
+    peak_idx = np.array([[i, j] for _, (i, j) in enumerate(peak_idx)])
+
+    if use_delta:
+        peak_score = np.array([X[idx[0], idx[1]] for idx in peak_idx])
+        delta = np.repeat(1e9, len(peak_score))
+        for i in range(len(delta)):
+            for j in range(len(peak_idx)):
+                if peak_score[j] > peak_score[i]:
+                    if np.linalg.norm(peak_idx[i] - peak_idx[j]) < delta[i]:
+                        delta[i] = np.linalg.norm(peak_idx[i] - peak_idx[j])
+        peak_score = peak_score * delta
+        n_peak_keep = int(0.95 * len(peak_idx))
+        peak_idx = peak_idx[np.argpartition(peak_score, -n_peak_keep)[-n_peak_keep:]]
+
     peaks = np.zeros(X.shape, dtype=int)
-    for label, (i, j) in enumerate(peak_idx):
-        peaks[i, j] = label + 1
+    for i in len(peak_idx):
+        peaks[peak_idx[i][0], peak_idx[i][1]] = i + 1
     return peaks
 
 
@@ -456,6 +473,7 @@ def find_peaks(
     layer: str,
     k: int,
     min_distance: int,
+    use_delta: bool = False,
     mask_layer: Optional[str] = None,
     out_layer: Optional[str] = None,
 ):
@@ -466,6 +484,7 @@ def find_peaks(
         layer: Layer to use as values to find peaks from.
         k: Apply a Gaussian blur with this kernel size prior to peak detection.
         min_distance: Minimum distance, in pixels, between peaks.
+        use_delta: Whether to filter the peaks using delta calculation.
         mask_layer: Find peaks only in regions specified by the mask.
         out_layer: Layer to save identified peaks as markers. By default, uses
             `{layer}_markers`.
@@ -477,7 +496,7 @@ def find_peaks(
         )
 
     X = utils.conv2d(X, k, mode="gauss")
-    peaks = _find_peaks(X, min_distance=min_distance)
+    peaks = _find_peaks(X, use_delta=use_delta, min_distance=min_distance)
     if mask_layer:
         peaks *= SKM.select_layer_data(adata, mask_layer)
     out_layer = out_layer or SKM.gen_new_layer_key(layer, SKM.MARKERS_SUFFIX)
