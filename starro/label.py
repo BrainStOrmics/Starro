@@ -429,7 +429,12 @@ def label_connected_components(
 
 
 def _find_peaks(
-    X: np.ndarray, use_delta: bool = False, **kwargs
+    X: np.ndarray,
+    min_distance: int,
+    use_delta: bool = False,
+    n_peaks: int = 1e9,
+    frac_peaks: float = 0.95,
+    **kwargs,
 ) -> Tuple[np.ndarray, np.ndarray]:
     """Find peaks from an arbitrary image.
 
@@ -437,7 +442,10 @@ def _find_peaks(
 
     Args:
         X: 2D Array to find peaks from
+        min_distance: Minimum distance, in pixels, between peaks.
         use_delta: Whether to filter the peaks using delta calculation.
+        n_peaks: Expected number of peaks.
+        frac_peaks: Expected fraction of cells with unique peaks.
         **kwargs: Keyword arguments to pass to :func:`feature.peak_local_max`.
 
     Returns:
@@ -446,20 +454,22 @@ def _find_peaks(
     """
     _kwargs = dict(p_norm=2)
     _kwargs.update(kwargs)
-    peak_idx = feature.peak_local_max(X, **_kwargs)
+    peak_idx = feature.peak_local_max(X, min_distance=min_distance, **_kwargs)
     peak_idx = np.array([[i, j] for _, (i, j) in enumerate(peak_idx)])
+    peak_score = np.array([X[idx[0], idx[1]] for idx in peak_idx])
 
     if use_delta:
-        peak_score = np.array([X[idx[0], idx[1]] for idx in peak_idx])
         delta = np.repeat(1e9, len(peak_score))
         for i in range(len(delta)):
             for j in range(len(peak_idx)):
                 if peak_score[j] > peak_score[i]:
                     if np.linalg.norm(peak_idx[i] - peak_idx[j]) < delta[i]:
                         delta[i] = np.linalg.norm(peak_idx[i] - peak_idx[j])
+        delta[delta > min_distance * 10] = min_distance * 10
         peak_score = peak_score * delta
-        n_peak_keep = int(0.95 * len(peak_idx))
-        peak_idx = peak_idx[np.argpartition(peak_score, -n_peak_keep)[-n_peak_keep:]]
+
+    n_peak_keep = min(n_peaks, int(frac_peaks * len(peak_idx)))
+    peak_idx = peak_idx[np.argpartition(peak_score, -n_peak_keep)[-n_peak_keep:]]
 
     peaks = np.zeros(X.shape, dtype=int)
     for i in len(peak_idx):
@@ -474,6 +484,8 @@ def find_peaks(
     k: int,
     min_distance: int,
     use_delta: bool = False,
+    n_peaks: int = 1e9,
+    frac_peaks: float = 0.95,
     mask_layer: Optional[str] = None,
     out_layer: Optional[str] = None,
 ):
@@ -485,6 +497,8 @@ def find_peaks(
         k: Apply a Gaussian blur with this kernel size prior to peak detection.
         min_distance: Minimum distance, in pixels, between peaks.
         use_delta: Whether to filter the peaks using delta calculation.
+        n_peaks: Expected number of peaks.
+        frac_peaks: Expected fraction of cells with unique peaks.
         mask_layer: Find peaks only in regions specified by the mask.
         out_layer: Layer to save identified peaks as markers. By default, uses
             `{layer}_markers`.
@@ -496,7 +510,13 @@ def find_peaks(
         )
 
     X = utils.conv2d(X, k, mode="gauss")
-    peaks = _find_peaks(X, use_delta=use_delta, min_distance=min_distance)
+    peaks = _find_peaks(
+        X,
+        use_delta=use_delta,
+        n_peaks=n_peaks,
+        frac_peaks=frac_peaks,
+        min_distance=min_distance,
+    )
     if mask_layer:
         peaks *= SKM.select_layer_data(adata, mask_layer)
     out_layer = out_layer or SKM.gen_new_layer_key(layer, SKM.MARKERS_SUFFIX)
@@ -508,6 +528,9 @@ def find_peaks_from_mask(
     adata: AnnData,
     layer: str,
     min_distance: int,
+    use_delta: bool = False,
+    n_peaks: int = 1e9,
+    frac_peaks: float = 0.95,
     distances_layer: Optional[str] = None,
     markers_layer: Optional[str] = None,
 ):
@@ -518,6 +541,9 @@ def find_peaks_from_mask(
         layer: Layer containing boolean mask. This will default to `{layer}_mask`.
             If not present in the provided AnnData, this argument used as a literal.
         min_distance: Minimum distance, in pixels, between peaks.
+        use_delta: Whether to filter the peaks using delta calculation.
+        n_peaks: Expected number of peaks.
+        frac_peaks: Expected fraction of cells with unique peaks.
         distances_layer: Layer to save distance from each pixel to the nearest zero (False)
             pixel (a.k.a. distance transform). By default, uses `{layer}_distances`.
         markers_layer: Layer to save identified peaks as markers. By default, uses
@@ -533,7 +559,13 @@ def find_peaks_from_mask(
         )
     lm.main_info(f"Finding peaks with minimum distance {min_distance}.")
     distances = cv2.distanceTransform(mask.astype(np.uint8), cv2.DIST_L2, 3)
-    peaks = _find_peaks(distances, min_distance=min_distance)
+    peaks = _find_peaks(
+        distances,
+        use_delta=use_delta,
+        n_peaks=n_peaks,
+        frac_peaks=frac_peaks,
+        min_distance=min_distance,
+    )
 
     distances_layer = distances_layer or SKM.gen_new_layer_key(
         layer, SKM.DISTANCES_SUFFIX
