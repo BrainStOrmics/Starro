@@ -30,7 +30,7 @@ pip install git+https://github.com/Bai-Lab/Starro.git
 - A brief **tutorial** [(vignette)](https://github.com/Bai-Lab/Starro/blob/main/notebooks/starro_rna_seg_tutorial.ipynb) is also included in this standalone package.
 
 ## Reproducibility
-Scripts to reproduce benchmarking and analytic results in Starro paper are in repository [Starro_benchmarking](https://github.com/Bai-Lab/Starro_benchmarking)
+Scripts to reproduce benchmarking and analytic results in Starro paper are in repository [Starro_scripts](https://github.com/Bai-Lab/Starro_scripts)
 
 ## Discussion 
 Users can use issue tracker to report software/code related [issues](https://github.com/Bai-Lab/Starro/issues). For discussion of novel usage cases and user tips, contribution on Starro performance optimization, please contact the authors via [email](mailto:baiyinqi@genomics.cn). 
