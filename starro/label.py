@@ -454,7 +454,9 @@ def _find_peaks(
     """
     _kwargs = dict(p_norm=2)
     _kwargs.update(kwargs)
-    peak_idx = feature.peak_local_max(X, min_distance=min_distance, **_kwargs)
+    peak_idx = feature.peak_local_max(
+        X, min_distance=min_distance, num_peaks=n_peaks, **_kwargs
+    )
     peak_idx = np.array([[i, j] for _, (i, j) in enumerate(peak_idx)])
     peak_score = np.array([X[idx[0], idx[1]] for idx in peak_idx])
 
