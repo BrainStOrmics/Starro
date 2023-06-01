@@ -12,11 +12,13 @@ Cell segmentation, the process of distinguishing boundaries of individual cells,
 </p>
 
 ## Highlights of Starro:
-* Starro provides the sole RNA-based, image-based, and combinatorial cell segmentation approaches, capable of analyzing all published sequencing- and imaging-based spatial transcriptomic data with subcellular resolution. 
-* Starro incorporates domain partitioning to account for the spatial heterogeneity of RNA density prior to segmentation. 
-* Starro leverages spot-wise RNA intensity and density as two fundamental features to construct the null hypothesis, enabling highly sensitive segmentation as long as the cell is observable to the naked eye.
-* Starro utilizes three novel algorithms, namely combinatorial Expectation Maximization and Belief Propagation (EM-BP), Modified local Moran’s I (mLMI), and Gaussian blurred-OTSU (gOTSU), to balance accuracy and data scalability in many diverse scenarios. 
-* Starro also includes spatially-resolved pleiotropic ligand-receptor interaction analysis and RNA-velocity vector field analysis, enriching downstream research possibilities.
+
+* <p align="justify">Starro provides the sole RNA-based, image-based, and combinatorial cell segmentation approaches, capable of analyzing all published sequencing- and imaging-based spatial transcriptomic data with subcellular resolution. </p>
+* <p align="justify">Starro incorporates domain partitioning to account for the spatial heterogeneity of RNA density prior to segmentation. It optimizes the latent parameters according to local densities, segmenting cells in each partitioned domain. This process is highly integrated, working silently and automatically. </p>
+* <p align="justify">Starro leverages spot-wise RNA intensity and density as two fundamental features to construct the null hypothesis, enabling highly sensitive segmentation as long as the cell is observable to the naked eye. </p>
+* <p align="justify">Starro utilizes three novel algorithms, namely combinatorial Expectation Maximization and Belief Propagation (EM-BP), Modified local Moran’s I (mLMI), and Gaussian blurred-OTSU (gOTSU), to balance accuracy and data scalability in many diverse scenarios. </p>
+* <p align="justify">Starro also includes spatially-resolved pleiotropic ligand-receptor interaction analysis and RNA-velocity vector field analysis, enriching downstream research possibilities. </p>
+
 
 ## Usage
 ### Installation
