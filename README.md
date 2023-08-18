@@ -3,7 +3,7 @@
 [![python~=3.8](https://img.shields.io/badge/python-3.8-brightgreen)](https://www.python.org/)
 [![documentation](https://readthedocs.org/projects/spateo-release/badge/?version=latest)](https://spateo-release.readthedocs.io/en/latest/tutorials/notebooks/cell_segmentation.html)
 
-[Quick Example](https://github.com/Bai-Lab/Starro/blob/main/notebooks/starro_rna_seg_tutorial.ipynb) - [Citation](https://github.com/Bai-Lab/Starro)
+[Quick Example](https://github.com/Bai-Lab/Starro/blob/main/notebooks/starro_rna_seg_tutorial.ipynb) - [Citation](https://www.biorxiv.org/content/10.1101/2022.12.07.519417v1)
 
 ![image](https://github.com/Bai-Lab/Starro/assets/37856906/603e3bf3-0bd9-4633-938f-9ec17c76e22c)
 
