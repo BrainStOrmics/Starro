@@ -197,4 +197,4 @@ def binary_morani_result(
             np.uint8
         )
 
-    return cell_mask.astype(np.bool)
+    return cell_mask.astype(bool)
